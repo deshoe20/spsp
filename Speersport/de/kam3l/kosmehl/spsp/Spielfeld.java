@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * class of the Speersport-Duell GUI - mainly consisting of a JPanel
@@ -48,6 +49,7 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener{
 	int reih = -1;
 	int counter = 1337;
 	String aktanzg = "";
+	private boolean bmode = false;
 	
 	/** an event-listener to do nothing **/ //yeah
 	static ActionListener tuenix = new ActionListener() {
@@ -63,13 +65,21 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener{
     /** the timer to control the flow of the game **/
 	public static Timer t = new Timer(20, tuenix);
 
-	
 	/**
 	 * construct the field with the resolution
 	 * @param hoehe y-axis resolution
 	 * @param breite x-axis resolution
 	 */
 	public Spielfeld(int hoehe, int breite, int anderreihe) {
+		this(hoehe, breite, anderreihe, false);
+	}
+	
+	/**
+	 * construct the field with the resolution
+	 * @param hoehe y-axis resolution
+	 * @param breite x-axis resolution
+	 */
+	public Spielfeld(int hoehe, int breite, int anderreihe, boolean bmode) {
 		x = breite;
 		y = hoehe;
 		this.setLayout(null);
@@ -79,6 +89,7 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener{
 		this.addKeyListener(this);
 		this.initHintergrund();
 		this.setFocusable(true);
+		this.bmode = bmode;
 		t.addActionListener(ticc);
 	}
 	
@@ -234,34 +245,34 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener{
 			//spieler2
 			
 			case KeyEvent.VK_NUMPAD0:
-				aktionsmanager(50, this.kaempferL.get(aktspieler));
+				if (!this.bmode) aktionsmanager(50, this.kaempferL.get(aktspieler));
 				break;	
 			case KeyEvent.VK_NUMPAD2:
-				aktionsmanager(60, this.kaempferL.get(aktspieler));
+				if (!this.bmode) aktionsmanager(60, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_UP:
-				bewegsmanager(1, this.kaempferL.get(aktspieler));
+				if (!this.bmode) bewegsmanager(1, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_DOWN:
-				bewegsmanager(2, this.kaempferL.get(aktspieler));
+				if (!this.bmode) bewegsmanager(2, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_LEFT:
-				bewegsmanager(3, this.kaempferL.get(aktspieler));
+				if (!this.bmode) bewegsmanager(3, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_RIGHT:
-				bewegsmanager(4, this.kaempferL.get(aktspieler));
+				if (!this.bmode) bewegsmanager(4, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_NUMPAD4:
-				this.kaempferL.get(aktspieler).setZiel2(-1);
+				if (!this.bmode) this.kaempferL.get(aktspieler).setZiel2(-1);
 				break;
 			case KeyEvent.VK_NUMPAD1:
-				this.kaempferL.get(aktspieler).setZiel2(1);
+				if (!this.bmode) this.kaempferL.get(aktspieler).setZiel2(1);
 				break;
 			case KeyEvent.VK_ENTER:
-				aktionsmanager(40, this.kaempferL.get(aktspieler));
+				if (!this.bmode) aktionsmanager(40, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_NUMPAD5:
-				this.kaempferL.get(aktspieler).setSpann(2);
+				if (!this.bmode) this.kaempferL.get(aktspieler).setSpann(2);
 				break;			
 				
 			default:
@@ -306,28 +317,28 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener{
 			//spieler2
 				
 			case KeyEvent.VK_UP:
-				bewegsmanager(-1, this.kaempferL.get(aktspieler));
+				if (!this.bmode) bewegsmanager(-1, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_DOWN:
-				bewegsmanager(-2, this.kaempferL.get(aktspieler));
+				if (!this.bmode) bewegsmanager(-2, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_LEFT:
-				bewegsmanager(-3, this.kaempferL.get(aktspieler));
+				if (!this.bmode) bewegsmanager(-3, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_RIGHT:
-				bewegsmanager(-4, this.kaempferL.get(aktspieler));
+				if (!this.bmode) bewegsmanager(-4, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_NUMPAD4:
-				this.kaempferL.get(aktspieler).setZiel2(0);
+				if (!this.bmode) this.kaempferL.get(aktspieler).setZiel2(0);
 				break;
 			case KeyEvent.VK_NUMPAD1:
-				this.kaempferL.get(aktspieler).setZiel2(0);
+				if (!this.bmode) this.kaempferL.get(aktspieler).setZiel2(0);
 				break;
 			case KeyEvent.VK_ENTER:
-				aktionsmanager(41, this.kaempferL.get(aktspieler));
+				if (!this.bmode) aktionsmanager(41, this.kaempferL.get(aktspieler));
 				break;
 			case KeyEvent.VK_NUMPAD5:
-				this.kaempferL.get(aktspieler).werfen();
+				if (!this.bmode) this.kaempferL.get(aktspieler).werfen();
 				break;
 				
 			default:
@@ -424,6 +435,35 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener{
 	 */
 	public void tick() {
 		if (counter == 1337) {
+			
+			/**
+			 * bot actions
+			 */
+			if (this.bmode) {
+				int aktspieler = (this.reih + 1) / 2;
+				Kaempfer bot = this.kaempferL.get(aktspieler);
+				int knr = 0;
+				if (bot.getRicht() == -1) {
+					knr = 1;
+				}
+				// speere holen?
+				
+				// bewegen?
+				if (ThreadLocalRandom.current().nextInt(0, 100 + 1) > 70) {
+
+					bot.setBxricht(ThreadLocalRandom.current().nextInt(-1, 1+1));
+					bot.setByricht(ThreadLocalRandom.current().nextInt(-1, 1+1));
+				}
+				if ((bot.getBxricht() != 0) || (bot.getByricht() != 0)) {
+					Vertex nRcht = spielflaeche.get(knr).isCloseOut(bot.getApunkt(), 100, bot.getBxricht(), bot.getByricht());
+					bot.setBxricht((int)nRcht.xwert);
+					bot.setByricht((int)nRcht.ywert);
+				}
+			}
+			/**
+			 * 
+			 */
+			
 			for (Kaempfer k: this.kaempferL) {
 				if ((k.getStatus() / 10) == 4) {
 					k.spaufheben(this.speereL);
@@ -490,4 +530,12 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener{
 		}
 	}
 	//leider keine zeit mehr fuer ausfuehrliche kommentare - aber bei dem gut strukturiereten code gar net noetig (rofl)
+
+	public boolean isBmode() {
+		return bmode;
+	}
+
+	public void setBmode(boolean bmode) {
+		this.bmode = bmode;
+	}
 }

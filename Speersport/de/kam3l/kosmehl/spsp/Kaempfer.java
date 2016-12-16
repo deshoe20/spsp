@@ -584,6 +584,10 @@ public class Kaempfer extends GeoObjekt{
 		}
 	}
 		
+	public void setApunkt(Vertex apunkt) {
+		this.apunkt = apunkt;
+	}
+
 	/** detects body hits --> hits except the lower legs returns distance to ground otherwise 1 **/
 	public int getroffenA(Vertex p) {
 		for (GeoObjekt g : geoL) {

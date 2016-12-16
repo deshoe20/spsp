@@ -31,8 +31,14 @@ public class Spielinit {
 			spielstarten(0, 0);
 		}
     };
+    ActionListener bstarter = new ActionListener() {
+		public void actionPerformed(ActionEvent event) {
+			spielstarten(0, 0, true);
+		}
+    };
+    
     /** start-background *000*/
-    JLabel startbild = new JLabel(new ImageIcon(getClass().getResource("/bilder/hintergrund.jpg")));
+    JLabel startbild = new JLabel(new ImageIcon(getClass().getResource("/bilder/frged.jpg")));
     int reih = new java.util.Random().nextInt(2);
     
     
@@ -47,9 +53,9 @@ public class Spielinit {
 	
 	// groesse geschwindigkeit sprungkraft wurfkraft name
 	/** config-set for the Kaempfers - according to the pattern size|speed|jumppower|throwpower|name **/
-	Object[] speinst1 = {1.0, 1.0, 1.0, 1.0, "Faust"};
+	Object[] speinst1 = {1.0, 1.0, 1.0, 0.6, "Faust"};
 	/** config-set for the Kaempfers - according to the pattern size|speed|jumppower|throwpower|name **/
-	Object[] speinst2 = {1.0, 1.3, 1.0, 1.5, "Olm"};
+	Object[] speinst2 = {1.0, 1.0, 1.0, 0.6, "Olm"};
 	/** config-set for the Kaempfers - according to the pattern size|speed|jumppower|throwpower|name **/
 	Object[] speinst3 = {0.9, 1.5, 1.0, 2.1, "Droddel"};
 	/** config-set for the Kaempfers - according to the pattern size|speed|jumppower|throwpower|name **/
@@ -67,10 +73,13 @@ public class Spielinit {
 	 */
 	public Spielinit() {
 		JMenuItem starten = new JMenuItem("Spiel starten");
+		JMenuItem bstarten = new JMenuItem("Botspiel starten");
 		spiel = new Spielfeldfenster(getName(), breite, hoehe);
 		spiel.erzeugen();
 		starten.addActionListener(starter);
+		bstarten.addActionListener(bstarter);
 		spiel.menuu.add(starten);
+		spiel.menuu.add(bstarten);
 		spiel.menuInit();
 		option();
 		spiel.add(startbild);
@@ -84,6 +93,15 @@ public class Spielinit {
 	 * @param pnkt2 score of player2
 	 */
 	void spielstarten(double pnkt1, double pnkt2) {
+		spielstarten(pnkt1, pnkt2, false);
+	}
+	
+	/**
+	 * start the game with setting the startscore and optional rngjesus controlled bot
+	 * @param pnkt1 score of player1
+	 * @param pnkt2 score of player2
+	 */
+	void spielstarten(double pnkt1, double pnkt2, boolean bot) {
 		spiel.remove(startbild);
 		if (feld != null) {
 			try {
@@ -95,7 +113,7 @@ public class Spielinit {
     		spiel.remove(feld);
 		}
 		this.reih =  this.reih * -1;
-		feld = new Spielfeld(getHoehe(), getBreite(), this.reih);
+		feld = new Spielfeld(getHoehe(), getBreite(), this.reih, bot);
 		innerneustart();	
 		feld.pnktstd1 = pnkt1;
 		feld.pnktstd2 = pnkt2;
@@ -118,7 +136,7 @@ public class Spielinit {
 	    			Thread.sleep(10);
 	    		} catch (InterruptedException e) {
 	    		}
-				spielstarten(feld.pnktstd1, feld.pnktstd2);
+				spielstarten(feld.pnktstd1, feld.pnktstd2, feld.isBmode());
 			}
 	    };
 		feld.status.addActionListener(innstrt);

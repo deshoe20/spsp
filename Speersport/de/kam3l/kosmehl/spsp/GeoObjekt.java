@@ -119,6 +119,23 @@ public class GeoObjekt {
 		return false;
 	}
 	
+	/**
+	 * checks if dot is inside the area of this geometric object
+	 * @param dot
+	 * @return true if dot is inside - otherwise false
+	 */
+	Vertex isCloseOut(Vertex dot, int range, int xRicht, int yRicht) {
+		Vertex result = new Vertex(xRicht, yRicht);
+		if ((dot.xwert + (range * xRicht) <= this.loecke.xwert) || (dot.xwert + (range * xRicht) >= (this.loecke.xwert + this.xlaenge))) {
+			result.xwert = result.xwert * -1;
+		}
+		if ((dot.ywert + (range * yRicht) <= this.loecke.ywert) || (dot.ywert + (range * yRicht) >= (this.loecke.ywert + this.ylaenge))) {
+			result.ywert = result.ywert * -1;
+		}
+		return result;
+	}
+	
+	
 
 	@Override
 	public boolean equals(Object that) {

@@ -223,31 +223,31 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 
 		// spieler1
 
-		case KeyEvent.VK_F:
+		case KeyEvent.VK_ENTER:
 			aktionsmanager(50, this.kaempferL.get(1 - aktspieler));
 			break;
 		case KeyEvent.VK_E:
 			aktionsmanager(40, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_R:
+		case KeyEvent.VK_CONTROL:
 			aktionsmanager(60, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_W:
+		case KeyEvent.VK_UP:
 			bewegsmanager(1, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_S:
+		case KeyEvent.VK_DOWN:
 			bewegsmanager(2, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_A:
+		case KeyEvent.VK_LEFT:
 			bewegsmanager(3, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_D:
+		case KeyEvent.VK_RIGHT:
 			bewegsmanager(4, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_3:
+		case KeyEvent.VK_5:
 			this.kaempferL.get(1 - aktspieler).setSpann(2);
 			break;
-		case KeyEvent.VK_2:
+		case KeyEvent.VK_3:
 			this.kaempferL.get(1 - aktspieler).setZiel2(1);
 			break;
 		case KeyEvent.VK_1:
@@ -264,19 +264,19 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 			if (!this.bmode)
 				aktionsmanager(60, this.kaempferL.get(aktspieler));
 			break;
-		case KeyEvent.VK_UP:
+		case KeyEvent.VK_I:
 			if (!this.bmode)
 				bewegsmanager(1, this.kaempferL.get(aktspieler));
 			break;
-		case KeyEvent.VK_DOWN:
+		case KeyEvent.VK_K:
 			if (!this.bmode)
 				bewegsmanager(2, this.kaempferL.get(aktspieler));
 			break;
-		case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_J:
 			if (!this.bmode)
 				bewegsmanager(3, this.kaempferL.get(aktspieler));
 			break;
-		case KeyEvent.VK_RIGHT:
+		case KeyEvent.VK_L:
 			if (!this.bmode)
 				bewegsmanager(4, this.kaempferL.get(aktspieler));
 			break;
@@ -288,7 +288,7 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 			if (!this.bmode)
 				this.kaempferL.get(aktspieler).setZiel2(1);
 			break;
-		case KeyEvent.VK_ENTER:
+		case KeyEvent.VK_P:
 			if (!this.bmode)
 				aktionsmanager(40, this.kaempferL.get(aktspieler));
 			break;
@@ -314,22 +314,22 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 		case KeyEvent.VK_E:
 			aktionsmanager(41, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_W:
+		case KeyEvent.VK_UP:
 			bewegsmanager(-1, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_S:
+		case KeyEvent.VK_DOWN:
 			bewegsmanager(-2, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_A:
+		case KeyEvent.VK_LEFT:
 			bewegsmanager(-3, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_D:
+		case KeyEvent.VK_RIGHT:
 			bewegsmanager(-4, this.kaempferL.get(1 - aktspieler));
 			break;
-		case KeyEvent.VK_3:
+		case KeyEvent.VK_5:
 			this.kaempferL.get(1 - aktspieler).werfen();
 			break;
-		case KeyEvent.VK_2:
+		case KeyEvent.VK_3:
 			this.kaempferL.get(1 - aktspieler).setZiel2(0);
 			break;
 		case KeyEvent.VK_1:
@@ -338,19 +338,19 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 
 		// spieler2
 
-		case KeyEvent.VK_UP:
+		case KeyEvent.VK_I:
 			if (!this.bmode)
 				bewegsmanager(-1, this.kaempferL.get(aktspieler));
 			break;
-		case KeyEvent.VK_DOWN:
+		case KeyEvent.VK_K:
 			if (!this.bmode)
 				bewegsmanager(-2, this.kaempferL.get(aktspieler));
 			break;
-		case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_J:
 			if (!this.bmode)
 				bewegsmanager(-3, this.kaempferL.get(aktspieler));
 			break;
-		case KeyEvent.VK_RIGHT:
+		case KeyEvent.VK_L:
 			if (!this.bmode)
 				bewegsmanager(-4, this.kaempferL.get(aktspieler));
 			break;
@@ -362,7 +362,7 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 			if (!this.bmode)
 				this.kaempferL.get(aktspieler).setZiel2(0);
 			break;
-		case KeyEvent.VK_ENTER:
+		case KeyEvent.VK_P:
 			if (!this.bmode)
 				aktionsmanager(41, this.kaempferL.get(aktspieler));
 			break;

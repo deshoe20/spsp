@@ -34,6 +34,15 @@ public class Vertex {
 		this.ywert = ywert;
 	}
 	
+	/**
+	 * @param xwert
+	 * @param ywert
+	 */
+	public Vertex(Vertex other) {
+		this.xwert = other.xwert;
+		this.ywert = other.ywert;
+	}
+	
 	public String toString() {
 		return (int)xwert + ", " + (int)ywert;
 	}
@@ -158,5 +167,19 @@ public class Vertex {
 			return ((this.xwert == other.xwert) && (this.ywert == other.ywert));
 		}
 		return false;
+	}
+	
+
+	
+	public boolean equals(Object that, int valence) {
+		boolean result = false;
+		if (that instanceof Vertex) {
+			Vertex other = (Vertex)that;
+			result = ((this.xwert == other.xwert) && (this.ywert == other.ywert));
+			if (!result) {
+				result = Math.abs(this.xwert - other.xwert) <= valence && Math.abs(this.ywert - other.ywert) <= valence;
+			}
+		}
+		return result;
 	}
 }

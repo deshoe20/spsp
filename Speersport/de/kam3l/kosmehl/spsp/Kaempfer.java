@@ -157,9 +157,13 @@ public class Kaempfer extends GeoObjekt{
 		this.bneig4 = 25;
 		if (this.spann1 == 0) {
 			this.aneig1 = 80;
+		} else {
+			this.aneig1 = Math.abs(this.aneig1);
 		}
 		if (this.spann2 == 0) {
 			this.aneig2 = 110;
+		} else {
+			this.aneig2 = Math.abs(this.aneig2);
 		}
 		this.coneig = -5;
 		this.lzv = 0;
@@ -665,11 +669,11 @@ public class Kaempfer extends GeoObjekt{
 	 */
 	public void setSpann(int a) {
 		if (a == 2) {
-			if (((spann2 == 0) && (this.a2spL.size() == 1))) {
+			if ((spann2 == 0) && (this.a2spL.size() == 1) && ((this.aneig2 * this.richt) < 175)) {
 				this.spann2 = 1;
 			}
 		} else {
-			if ((spann1 == 0) && (this.a1spL.size() == 1)) {
+			if ((spann1 == 0) && (this.a1spL.size() == 1) && ((this.aneig2 * this.richt) < 175)) {
 				this.spann1 = 1;
 			}
 		}
@@ -724,6 +728,10 @@ public class Kaempfer extends GeoObjekt{
 		for (GeoObjekt p : this.geoL) {
 			p.paintMeTo(g);
 		}
+	}
+	
+	public boolean isMaxGebueckt() {
+		return ((this.status == 40) && (bu1.roecke.abstandP(a2.luecke) <= (aufloesung / 20)));
 	}
 
 }

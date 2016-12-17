@@ -32,6 +32,7 @@ public class Speer extends GeoObjekt {
 	Viereck sp3;
 	public int flag = 0;
 	public boolean flag2 = false;
+	private int flv = 0;
 	
 	public Speer() {
 		super(100, 30, null); // pseudo-numbers
@@ -195,11 +196,17 @@ public class Speer extends GeoObjekt {
 			} else if (this.beweg.xwert * this.richt < -5) {
 				this.beweg.xwert = this.beweg.xwert - (this.beweg.xwert / 2);
 			} else {
-				this.beweg.xwert = 0;
+				if (this.flv < 2) {
+					this.beweg.xwert = this.richt * -1 * 7;
+					this.flv++;
+				} else {
+					this.beweg.xwert = 0;
+				}
 			}
 			if (flag < 10) {
 				this.beweg.ywert = 0;
 				flag = 0;
+				this.flv = 0;
 			} else {
 				this.beweg.ywert = hoehe / 35 + this.ra.nextInt(5);
 				this.loecke.addi(beweg.xwert, beweg.ywert);

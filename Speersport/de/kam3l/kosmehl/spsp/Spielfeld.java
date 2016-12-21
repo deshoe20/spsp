@@ -6,19 +6,20 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * class of the Speersport-Duell GUI - mainly consisting of a JPanel
@@ -26,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Keks0r
  *
  */
-public class Spielfeld extends JPanel implements MouseListener, KeyListener {
+public class Spielfeld extends JPanel implements MouseListener {
 	/** variable to suppress a warning **/
 	private static final long serialVersionUID = 1L;
 	/** the list of the simple geometric objects **/
@@ -54,6 +55,10 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 	private Vertex botStartP = null;
 	private int flv = 0;
 	private boolean mussLeerLaufen = false;
+
+	public static enum aktionen {
+		BEWEG_OBEN, BEWEG_OBEN_STOP, BEWEG_UNTEN, BEWEG_UNTEN_STOP, BEWEG_LINKS, BEWEG_LINKS_STOP, BEWEG_RECHTS, BEWEG_RECHTS_STOP, BUECKEN_RUNTER, BUECKEN_HOCH, ZIEL_HOCH, ZIEL_HOCH_STOP, ZIEL_RUNTER, ZIEL_RUNTER_STOP, SPANNEN, WERFEN, SPRINGEN1, SPRINGEN2
+	};
 
 	/** an event-listener to do nothing **/ // yeah
 	static ActionListener tuenix = new ActionListener() {
@@ -96,7 +101,10 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 		this.reih = anderreihe;
 		this.setPreferredSize(new Dimension(x, y));
 		this.addMouseListener(this);
-		this.addKeyListener(this);
+
+		initSteuerung();
+		initAktionsKarte();
+
 		this.initHintergrund();
 		this.setFocusable(true);
 		this.bmode = bmode;
@@ -216,172 +224,111 @@ public class Spielfeld extends JPanel implements MouseListener, KeyListener {
 
 	}
 
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		int aktspieler = (this.reih + 1) / 2;
-		switch (arg0.getKeyCode()) {
-
-		// spieler1
-
-		case KeyEvent.VK_ENTER:
-			aktionsmanager(50, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_E:
-			aktionsmanager(40, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_CONTROL:
-			aktionsmanager(60, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_UP:
-			bewegsmanager(1, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_DOWN:
-			bewegsmanager(2, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_LEFT:
-			bewegsmanager(3, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_RIGHT:
-			bewegsmanager(4, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_5:
-			this.kaempferL.get(1 - aktspieler).setSpann(2);
-			break;
-		case KeyEvent.VK_3:
-			this.kaempferL.get(1 - aktspieler).setZiel2(1);
-			break;
-		case KeyEvent.VK_1:
-			this.kaempferL.get(1 - aktspieler).setZiel2(-1);
-			break;
-
-		// spieler2
-
-		case KeyEvent.VK_NUMPAD0:
-			if (!this.bmode)
-				aktionsmanager(50, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_NUMPAD2:
-			if (!this.bmode)
-				aktionsmanager(60, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_I:
-			if (!this.bmode)
-				bewegsmanager(1, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_K:
-			if (!this.bmode)
-				bewegsmanager(2, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_J:
-			if (!this.bmode)
-				bewegsmanager(3, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_L:
-			if (!this.bmode)
-				bewegsmanager(4, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_NUMPAD4:
-			if (!this.bmode)
-				this.kaempferL.get(aktspieler).setZiel2(-1);
-			break;
-		case KeyEvent.VK_NUMPAD1:
-			if (!this.bmode)
-				this.kaempferL.get(aktspieler).setZiel2(1);
-			break;
-		case KeyEvent.VK_P:
-			if (!this.bmode)
-				aktionsmanager(40, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_NUMPAD5:
-			if (!this.bmode)
-				this.kaempferL.get(aktspieler).setSpann(2);
-			break;
-
-		default:
-
-			System.out.println("taste gedrueckt dies net gibbet: " + arg0.getKeyCode());
-
+	private void initSteuerung() {
+		for (Kaempfer k : this.kaempferL) {
+			for (Map.Entry<Spielfeld.aktionen, KeyStroke> taste : k.tastenBeleg.tastenKarte.entrySet()) {
+				this.getInputMap().put(taste.getValue(), taste.getKey());
+			}
 		}
 	}
 
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		int aktspieler = (this.reih + 1) / 2;
-		switch (arg0.getKeyCode()) {
-
-		// spieler1
-
-		case KeyEvent.VK_E:
-			aktionsmanager(41, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_UP:
-			bewegsmanager(-1, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_DOWN:
-			bewegsmanager(-2, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_LEFT:
-			bewegsmanager(-3, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_RIGHT:
-			bewegsmanager(-4, this.kaempferL.get(1 - aktspieler));
-			break;
-		case KeyEvent.VK_5:
-			this.kaempferL.get(1 - aktspieler).werfen();
-			break;
-		case KeyEvent.VK_3:
-			this.kaempferL.get(1 - aktspieler).setZiel2(0);
-			break;
-		case KeyEvent.VK_1:
-			this.kaempferL.get(1 - aktspieler).setZiel2(0);
-			break;
-
-		// spieler2
-
-		case KeyEvent.VK_I:
-			if (!this.bmode)
-				bewegsmanager(-1, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_K:
-			if (!this.bmode)
-				bewegsmanager(-2, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_J:
-			if (!this.bmode)
-				bewegsmanager(-3, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_L:
-			if (!this.bmode)
-				bewegsmanager(-4, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_NUMPAD4:
-			if (!this.bmode)
-				this.kaempferL.get(aktspieler).setZiel2(0);
-			break;
-		case KeyEvent.VK_NUMPAD1:
-			if (!this.bmode)
-				this.kaempferL.get(aktspieler).setZiel2(0);
-			break;
-		case KeyEvent.VK_P:
-			if (!this.bmode)
-				aktionsmanager(41, this.kaempferL.get(aktspieler));
-			break;
-		case KeyEvent.VK_NUMPAD5:
-			if (!this.bmode)
-				this.kaempferL.get(aktspieler).werfen();
-			break;
-
-		default:
-
-			System.out.println("taste gedrueckt dies net gibbet: " + arg0.getKeyCode());
-
+	// oben oben_stop unten unten_stop links links_stop rechts rechts_stop
+	// buecken_runter buecken_hoch ziel_hoch ziel_hoch_stop
+	// ziel_runter ziel_runter_stop spannen werfen springen1 springen2
+	@SuppressWarnings("serial")
+	private void initAktionsKarte() {
+		for (Kaempfer k : this.kaempferL) {
+			this.getActionMap().put(Spielfeld.aktionen.BEWEG_OBEN, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					bewegsmanager(1, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BEWEG_OBEN_STOP, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					bewegsmanager(-1, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BEWEG_UNTEN, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					bewegsmanager(2, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BEWEG_UNTEN_STOP, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					bewegsmanager(-2, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BEWEG_LINKS, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					bewegsmanager(3, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BEWEG_LINKS_STOP, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					bewegsmanager(-3, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BEWEG_RECHTS, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					bewegsmanager(4, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BEWEG_RECHTS_STOP, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					bewegsmanager(-4, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BUECKEN_RUNTER, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					aktionsmanager(40, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.BUECKEN_HOCH, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					aktionsmanager(41, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.ZIEL_HOCH, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					k.setZiel2(1);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.ZIEL_HOCH_STOP, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					k.setZiel2(0);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.ZIEL_RUNTER, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					k.setZiel2(-1);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.ZIEL_RUNTER_STOP, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					k.setZiel2(0);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.SPANNEN, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					k.setSpann(2);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.WERFEN, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					k.werfen();
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.SPRINGEN1, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					aktionsmanager(50, k);
+				}
+			});
+			this.getActionMap().put(Spielfeld.aktionen.SPRINGEN2, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					aktionsmanager(60, k);
+				}
+			});
 		}
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-
 	}
 
 	/**

@@ -29,6 +29,7 @@ public class Kaempfer extends GeoObjekt{
 	String name;
 	/** list of the contained {@link GeoObjekt GeoObjekts} **/
 	List<GeoObjekt> geoL = new ArrayList<GeoObjekt>();
+	public TastenBeleg tastenBeleg;	
 		
 	/** 
 	 * the critical hit-boxes<br><br>

@@ -55,6 +55,7 @@ public class Spielfeld extends JPanel implements MouseListener {
 	private Vertex botStartP = null;
 	private int flv = 0;
 	private boolean mussLeerLaufen = false;
+	private boolean spielerSteuerungInitiiert = false;
 
 	public static enum aktionen {
 		BEWEG_OBEN, BEWEG_OBEN_STOP, BEWEG_UNTEN, BEWEG_UNTEN_STOP, BEWEG_LINKS, BEWEG_LINKS_STOP, BEWEG_RECHTS, BEWEG_RECHTS_STOP, BUECKEN_RUNTER, BUECKEN_HOCH, ZIEL_HOCH, ZIEL_HOCH_STOP, ZIEL_RUNTER, ZIEL_RUNTER_STOP, SPANNEN, WERFEN, SPRINGEN1, SPRINGEN2
@@ -101,10 +102,6 @@ public class Spielfeld extends JPanel implements MouseListener {
 		this.reih = anderreihe;
 		this.setPreferredSize(new Dimension(x, y));
 		this.addMouseListener(this);
-
-		initSteuerung();
-		initAktionsKarte();
-
 		this.initHintergrund();
 		this.setFocusable(true);
 		this.bmode = bmode;
@@ -152,13 +149,13 @@ public class Spielfeld extends JPanel implements MouseListener {
 	 */
 	public void pnktnstln() {
 		java.text.DecimalFormat enkst = new java.text.DecimalFormat("0.0");
-		String aktpkt = " " + enkst.format(pnktstd1) + "  |  " + enkst.format(pnktstd2) + " ";
+		String aktpkt = " " + enkst.format(pnktstd2) + "  |  " + enkst.format(pnktstd1) + " ";
 		if ((punkte == null) && (pnktstd1 == 0) && (pnktstd2 == 0)) {
 			punkte.setText(" -  |  - ");
 		} else {
 			punkte.setText(aktpkt);
 		}
-		if ((pnktstd1 >= 10) || (pnktstd2 >= 10)) {
+		if ((pnktstd1 >= 99) || (pnktstd2 >= 99)) {
 			ende();
 		}
 	}
@@ -176,10 +173,10 @@ public class Spielfeld extends JPanel implements MouseListener {
 	/**
 	 * end the round
 	 */
-	public void ende() {
-		int knr = 1;
+	public void ende() { // FIXME : move punkte to kaempfer
+		int knr = 2; // FIXME
 		if (pnktstd2 > pnktstd1) {
-			knr = 2;
+			knr = 1;
 		}
 		javax.swing.JOptionPane.showMessageDialog(null, "Spieler " + knr + " hat gewonnen", "Spiel vorbei",
 				javax.swing.JOptionPane.INFORMATION_MESSAGE, null);
@@ -224,110 +221,104 @@ public class Spielfeld extends JPanel implements MouseListener {
 
 	}
 
-	private void initSteuerung() {
-		for (Kaempfer k : this.kaempferL) {
-			for (Map.Entry<Spielfeld.aktionen, KeyStroke> taste : k.tastenBeleg.tastenKarte.entrySet()) {
-				this.getInputMap().put(taste.getValue(), taste.getKey());
-			}
-		}
-	}
-
-	// oben oben_stop unten unten_stop links links_stop rechts rechts_stop
-	// buecken_runter buecken_hoch ziel_hoch ziel_hoch_stop
-	// ziel_runter ziel_runter_stop spannen werfen springen1 springen2
 	@SuppressWarnings("serial")
-	private void initAktionsKarte() {
-		for (Kaempfer k : this.kaempferL) {
-			this.getActionMap().put(Spielfeld.aktionen.BEWEG_OBEN, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					bewegsmanager(1, k);
+	public void initSteuerung() {
+		if (!this.spielerSteuerungInitiiert) {
+			for (Kaempfer k : this.kaempferL) {
+				for (Map.Entry<Spielfeld.aktionen, KeyStroke> taste : k.tastenBeleg.tastenKarte.entrySet()) {
+					this.getInputMap().put(taste.getValue(), taste.getKey());
 				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BEWEG_OBEN_STOP, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					bewegsmanager(-1, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BEWEG_UNTEN, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					bewegsmanager(2, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BEWEG_UNTEN_STOP, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					bewegsmanager(-2, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BEWEG_LINKS, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					bewegsmanager(3, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BEWEG_LINKS_STOP, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					bewegsmanager(-3, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BEWEG_RECHTS, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					bewegsmanager(4, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BEWEG_RECHTS_STOP, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					bewegsmanager(-4, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BUECKEN_RUNTER, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					aktionsmanager(40, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.BUECKEN_HOCH, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					aktionsmanager(41, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.ZIEL_HOCH, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					k.setZiel2(1);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.ZIEL_HOCH_STOP, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					k.setZiel2(0);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.ZIEL_RUNTER, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					k.setZiel2(-1);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.ZIEL_RUNTER_STOP, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					k.setZiel2(0);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.SPANNEN, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					k.setSpann(2);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.WERFEN, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					k.werfen();
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.SPRINGEN1, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					aktionsmanager(50, k);
-				}
-			});
-			this.getActionMap().put(Spielfeld.aktionen.SPRINGEN2, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					aktionsmanager(60, k);
-				}
-			});
+				this.getActionMap().put(Spielfeld.aktionen.BEWEG_OBEN, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						bewegsmanager(1, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BEWEG_OBEN_STOP, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						bewegsmanager(-1, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BEWEG_UNTEN, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						bewegsmanager(2, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BEWEG_UNTEN_STOP, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						bewegsmanager(-2, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BEWEG_LINKS, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						bewegsmanager(3, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BEWEG_LINKS_STOP, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						bewegsmanager(-3, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BEWEG_RECHTS, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						bewegsmanager(4, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BEWEG_RECHTS_STOP, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						bewegsmanager(-4, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BUECKEN_RUNTER, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						aktionsmanager(40, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.BUECKEN_HOCH, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						aktionsmanager(41, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.ZIEL_HOCH, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						k.setZiel2(1);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.ZIEL_HOCH_STOP, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						k.setZiel2(0);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.ZIEL_RUNTER, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						k.setZiel2(-1);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.ZIEL_RUNTER_STOP, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						k.setZiel2(0);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.SPANNEN, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						k.setSpann(2);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.WERFEN, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						k.werfen();
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.SPRINGEN1, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						aktionsmanager(50, k);
+					}
+				});
+				this.getActionMap().put(Spielfeld.aktionen.SPRINGEN2, new AbstractAction() {
+					public void actionPerformed(ActionEvent e) {
+						aktionsmanager(60, k);
+					}
+				});
+			}
 		}
 	}
 

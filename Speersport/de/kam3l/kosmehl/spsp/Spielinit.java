@@ -185,7 +185,7 @@ public class Spielinit {
 			Spielfeld.t.removeActionListener(feld.ticc);
 			spiel.remove(feld);
 		}
-		this.reih = this.reih * -1;
+		this.reih = this.reih; // TODO: rework and move into feld
 		feld = new Spielfeld(getHoehe(), getBreite(), this.reih, bot);
 		innerneustart();
 		feld.pnktstd1 = pnkt1;
@@ -275,19 +275,22 @@ public class Spielinit {
 	 * @param kanz
 	 *            the amount of Kaempfer to be placed
 	 */
-	public void kaepferinit(Spielfeld feld, int kanz) { // kanz not yet
-														// implemented
+	public void kaepferinit(Spielfeld feld, int kanz) {
+		// FIXME: alle dabutt die dönen diamanten
+		Vertex linkeSpielerEcke = new Vertex(getBreite() / 10.2, getHoehe() / 2.6);
+		Vertex rechteSpielerEcke = new Vertex(getBreite() / 1.11, getHoehe() / 1.1);
 		spieler1 = new Kaempfer((Double) this.speinst1[0], (Double) this.speinst1[1], (Double) this.speinst1[2],
 				(Double) this.speinst2[3], (String) this.speinst1[4], new Color(((this.reih + 1) / 2) * 200, 0, 200));
 		spieler1.tastenBeleg = tastenSp1;
-		spieler1.setKaempfer(new Vertex(getBreite() / 10.2, getHoehe() / 2.6), 1, breite + hoehe);
+		spieler1.setKaempfer(rechteSpielerEcke, -1, breite + hoehe);
 		feld.kaempferL.add(spieler1);
 		for (int i = 1; i < kanz; i++) { // so ein blödsinn
 			spieler2 = new Kaempfer(this.speinst2, new Color((((this.reih * -1) + 1) / 2) * 200, 0, 200));
 			spieler2.tastenBeleg = tastenSp2;
-			spieler2.setKaempfer(new Vertex(getBreite() / 1.11, getHoehe() / 1.1), -1, breite + hoehe);
+			spieler2.setKaempfer(linkeSpielerEcke, 1, breite + hoehe);
 			feld.kaempferL.add(spieler2);
 		}
+		feld.initSteuerung();
 	}
 
 	/**

@@ -30,6 +30,8 @@ public class Kaempfer extends GeoObjekt{
 	/** list of the contained {@link GeoObjekt GeoObjekts} **/
 	List<GeoObjekt> geoL = new ArrayList<GeoObjekt>();
 	public TastenBeleg tastenBeleg;	
+	
+	public int aktPkt = 0;
 		
 	/** 
 	 * the critical hit-boxes<br><br>

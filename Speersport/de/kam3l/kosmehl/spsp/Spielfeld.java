@@ -470,11 +470,29 @@ public class Spielfeld extends JPanel implements MouseListener {
 						}
 						if ((bot.getSpann(2) > 0) && (ThreadLocalRandom.current().nextInt(0, 1000 + 1) > 985)
 								&& !mussLeerLaufen) {
-							bot.werfen();
+							if (((bot.getA2SpeerNeigung() > 90) || (bot.getA2SpeerNeigung() < 70)) && (ThreadLocalRandom.current().nextInt(0, 100 + 1) > 90)) {
+								
+							} else {
+								bot.werfen();
+							}
 						}
 						// zielen?
 						if (ThreadLocalRandom.current().nextInt(0, 100 + 1) > 85 && !mussLeerLaufen) {
-							bot.setZiel2(ThreadLocalRandom.current().nextInt(-1, 1 + 1));
+							if (bot.getA2SpeerNeigung() > 90) {
+								if (ThreadLocalRandom.current().nextInt(0, 100 + 1) > 20) {
+									bot.setZiel2(1);
+								} else {
+									bot.setZiel2(-1);
+								}
+							} else if (bot.getA2SpeerNeigung() < 70) {
+								if (ThreadLocalRandom.current().nextInt(0, 100 + 1) > 20) {
+									bot.setZiel2(-1);
+								} else {
+									bot.setZiel2(1);
+								}
+							} else {
+								bot.setZiel2(ThreadLocalRandom.current().nextInt(-1, 1 + 1));								
+							}
 							if (bot.a1spL.size() == 1) {
 								bot.setZiel1(ThreadLocalRandom.current().nextInt(-1, 1 + 1));
 							}

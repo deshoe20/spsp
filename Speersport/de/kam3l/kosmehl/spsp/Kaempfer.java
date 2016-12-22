@@ -590,6 +590,10 @@ public class Kaempfer extends GeoObjekt{
 			hintun();
 		}
 	}
+	
+	public double getA2SpeerNeigung() {
+		return this.a2spL.get(0).getNeigung() * this.richt;
+	}
 		
 	public void setApunkt(Vertex apunkt) {
 		this.apunkt = apunkt;

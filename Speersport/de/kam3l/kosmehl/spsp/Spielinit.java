@@ -43,7 +43,7 @@ public class Spielinit {
 
 	/** start-background *000 */
 	JLabel startbild = new JLabel(new ImageIcon(getClass().getResource("/bilder/frged.jpg")));
-	int reih = new java.util.Random().nextInt(2);
+	int reih = 0;
 
 	// config-->
 

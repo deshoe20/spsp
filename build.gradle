@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main']
+        }
+        resources {
+            srcDirs = ['src/resources']
+        }
+    }
+}
+
+jar {
+    baseName = 'spsp'
+    version =  '0.0.9' 
+    manifest {
+        attributes 'Main-Class': 'de.kam3l.kosmehl.spsp.Main'
+    }
+}
